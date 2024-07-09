@@ -1,31 +1,31 @@
-import React from 'react';
-import logo from '../assets/holberton-logo.jpg';
-import { StyleSheet, css } from 'aphrodite';
+import React from "react";
+import { shallow } from "enzyme";
+import WithLogging from "./WithLogging";
 
-function Header() {
-  return (
-    <header className={css(styles.header)}>
-      <img className={css(styles.logo)} src={logo} alt='logo' />
-      <h1 className={css(styles.title)}>School dashboard</h1>
-    </header>
-  );
-}
+const TestComponent = () => <p>Test Component</p>;
 
-const styles = StyleSheet.create({
-  header: {
-    display: 'flex',
-    color: '#e0344a',
-    alignItems: 'center',
-    borderBottom: 'thick solid #e0344a',
-    width: '100%',
-    position: 'fixed',
-  },
-  logo: {
-    width: '144px',
-  },
-  title: {
-    margin: 0,
-  },
+describe("WithLogging tests", () => {
+  it("should call console.log on mount and dismount", () => {
+    const spy = jest.spyOn(console, "log").mockImplementation();
+    const NewComponent = WithLogging(TestComponent);
+    const wrapper = shallow(<NewComponent />);
+
+    expect(spy).toBeCalledTimes(1);
+    wrapper.unmount();
+    expect(spy).toBeCalledTimes(2);
+    spy.mockRestore();
+  });
+
+  it("should log out the right message on mount and on unmount", () => {
+    const spy = jest.spyOn(console, "log").mockImplementation();
+    const NewComponent = WithLogging(TestComponent);
+    const wrapper = shallow(<NewComponent />);
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledWith("Component TestComponent is mounted");
+    wrapper.unmount();
+    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toBeCalledWith("Component TestComponent is going to unmount");
+    spy.mockRestore();
+  });
 });
-
-export default Header;
